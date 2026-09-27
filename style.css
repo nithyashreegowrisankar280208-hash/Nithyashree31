@@ -1,0 +1,269 @@
+:root {
+    --purple: #7357d9;
+    --dark-purple: #5035b5;
+    --light-purple: #f0ecff;
+    --background: #f8f6ff;
+    --text: #251d3a;
+    --muted: #777087;
+    --border: #e7e1f3;
+    --white: #ffffff;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--background);
+    color: var(--text);
+}
+
+.container {
+    width: min(820px, 92%);
+    margin: 0 auto;
+    padding: 45px 0 25px;
+}
+
+.hero {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.logo {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 18px;
+    display: grid;
+    place-items: center;
+    border-radius: 18px;
+    background: linear-gradient(
+        135deg,
+        #a58af9,
+        var(--purple)
+    );
+    color: white;
+    font-size: 30px;
+}
+
+.tagline {
+    color: var(--purple);
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 3px;
+}
+
+h1 {
+    font-size: clamp(30px, 5vw, 45px);
+    margin: 15px 0;
+}
+
+h1 span {
+    color: var(--purple);
+}
+
+.subtitle {
+    color: var(--muted);
+    line-height: 1.6;
+}
+
+.card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 28px;
+    margin-bottom: 20px;
+    box-shadow: 0 12px 35px rgba(50, 30, 90, 0.05);
+}
+
+h2 {
+    font-size: 20px;
+    margin-top: 0;
+}
+
+label {
+    display: block;
+    font-size: 14px;
+    font-weight: bold;
+    margin: 20px 0 9px;
+}
+
+select,
+textarea {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    font: inherit;
+    color: var(--text);
+    background: #fdfcff;
+    outline: none;
+}
+
+select:focus,
+textarea:focus {
+    border-color: var(--purple);
+    box-shadow: 0 0 0 3px rgba(115, 87, 217, 0.12);
+}
+
+textarea {
+    resize: vertical;
+    line-height: 1.6;
+    min-height: 140px;
+}
+
+.form-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+#counter {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 10px;
+    background: var(--purple);
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background: var(--dark-purple);
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+.note {
+    text-align: center;
+    color: var(--muted);
+    font-size: 12px;
+    margin: 20px 0 0;
+}
+
+.result-card {
+    overflow-wrap: anywhere;
+}
+
+.result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.result-header h2 {
+    margin-bottom: 0;
+}
+
+.copy-button {
+    background: var(--light-purple);
+    color: var(--dark-purple);
+    padding: 9px 15px;
+}
+
+.copy-button:hover {
+    background: #e4dcff;
+}
+
+#result {
+    line-height: 1.7;
+    margin-top: 20px;
+}
+
+.text-result {
+    white-space: pre-wrap;
+}
+
+.quiz-question {
+    padding: 18px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    margin-bottom: 16px;
+}
+
+.quiz-question h3 {
+    font-size: 16px;
+    margin-top: 0;
+}
+
+.options {
+    display: grid;
+    gap: 10px;
+}
+
+.option {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px;
+    margin: 0;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: normal;
+}
+
+.option input {
+    margin-top: 4px;
+    accent-color: var(--purple);
+}
+
+.check-button {
+    margin-top: 14px;
+}
+
+.feedback {
+    font-size: 14px;
+}
+
+.correct {
+    color: #167647;
+}
+
+.incorrect {
+    color: #b42318;
+}
+
+footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 12px;
+    padding: 15px 0;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+@media (max-width: 520px) {
+    .container {
+        padding-top: 25px;
+    }
+
+    .card {
+        padding: 20px;
+    }
+
+    .form-footer {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .form-footer button {
+        width: 100%;
+    }
+}

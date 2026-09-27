@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>EduGenie - AI Learning Assistant</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', path='/style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+    <header class="hero">
+        <div class="logo">✦</div>
+
+        <p class="tagline">YOUR AI STUDY COMPANION</p>
+
+        <h1>Welcome to <span>EduGenie</span></h1>
+
+        <p class="subtitle">
+            Learn smarter with your personal AI learning assistant.
+        </p>
+    </header>
+
+
+    <section class="card">
+
+        <h2>What would you like to learn?</h2>
+
+        <form id="learning-form">
+
+            <label for="task">Choose a feature</label>
+
+            <select id="task" name="task">
+                <option value="qa">Ask a Question</option>
+                <option value="explain">Explain a Concept</option>
+                <option value="quiz">Generate a Quiz</option>
+                <option value="summarize">Summarize Text</option>
+                <option value="learn">Learning Path</option>
+            </select>
+
+
+            <label for="user-input">
+                Enter your question or study material
+            </label>
+
+            <textarea
+                id="user-input"
+                name="text"
+                rows="6"
+                maxlength="20000"
+                placeholder="Type your question or paste your study material..."
+                required
+            ></textarea>
+
+            <div class="form-footer">
+                <span id="counter">0 / 20000</span>
+
+                <button type="submit" id="submit-button">
+                    ✨ Generate
+                </button>
+            </div>
+
+        </form>
+
+        <p class="note">
+            AI-generated answers may contain mistakes.
+            Verify important information.
+        </p>
+
+    </section>
+
+
+    <section class="card result-card"
+             id="result-card"
+             hidden>
+
+        <div class="result-header">
+            <h2>Your Result</h2>
+
+            <button type="button"
+                    class="copy-button"
+                    id="copy-button">
+                Copy
+            </button>
+        </div>
+
+        <div id="result"></div>
+
+    </section>
+
+
+    <footer>
+        EduGenie · Learn Something New Every Day
+    </footer>
+
+</div>
+
+
+<script>
+const form = document.getElementById("learning-form");
+const task = document.getElementById("task");
+const input = document.getElementById("user-input");
+const button = document.getElementById("submit-button");
+const resultCard = document.getElementById("result-card");
+const result = document.getElementById("result");
+const counter = document.getElementById("counter");
+const copyButton = document.getElementById("copy-button");
+
+
+const placeholders = {
+    qa: "Example: Which is the largest ocean?",
+    explain: "Example: Explain photosynthesis simply.",
+    quiz: "Enter a topic or paste your study material.",
+    summarize: "Paste the passage you want to summarize.",
+    learn: "Example: I want to learn Python from beginner to advanced."
+};
+
+
+task.addEventListener("change", () => {
+    input.placeholder = placeholders[task.value];
+});
+
+
+input.addEventListener("input", () => {
+    counter.textContent =
+        `${input.value.length} / 20000`;
+});
+
+
+function displayResult(data) {
+    result.replaceChildren();
+
+    if (Array.isArray(data)) {
+        data.forEach((question, index) => {
+            const card = document.createElement("div");
+            card.className = "quiz-question";
+
+            const heading = document.createElement("h3");
+            heading.textContent =
+                `${index + 1}. ${question.question}`;
+
+            card.appendChild(heading);
+
+            const options = document.createElement("div");
+            options.className = "options";
+
+            question.options.forEach((option, optionIndex) => {
+                const label = document.createElement("label");
+                label.className = "option";
+
+                const radio = document.createElement("input");
+                radio.type = "radio";
+                radio.name = `question-${index}`;
+                radio.value = option;
+
+                const span = document.createElement("span");
+                span.textContent = option;
+
+                label.append(radio, span);
+                options.appendChild(label);
+            });
+
+            const checkButton = document.createElement("button");
+            checkButton.type = "button";
+            checkButton.className = "check-button";
+            checkButton.textContent = "Check Answer";
+
+            const feedback = document.createElement("p");
+            feedback.className = "feedback";
+
+            checkButton.addEventListener("click", () => {
+                const selected =
+                    options.querySelector("input:checked");
+
+                if (!selected) {
+                    feedback.textContent =
+                        "Please select an answer.";
+                    return;
+                }
+
+                if (selected.value === question.answer) {
+                    feedback.textContent =
+                        "Correct! " + question.explanation;
+
+                    feedback.className = "feedback correct";
+                } else {
+                    feedback.textContent =
+                        "Correct answer: " +
+                        question.answer +
+                        ". " +
+                        question.explanation;
+
+                    feedback.className = "feedback incorrect";
+                }
+            });
+
+            card.append(
+                options,
+                checkButton,
+                feedback
+            );
+
+            result.appendChild(card);
+        });
+
+    } else {
+        const output = document.createElement("div");
+        output.className = "text-result";
+        output.textContent = String(data);
+
+        result.appendChild(output);
+    }
+}
+
+
+form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const text = input.value.trim();
+
+    if (!text) {
+        input.focus();
+        return;
+    }
+
+    button.disabled = true;
+    button.textContent = "Generating...";
+
+    resultCard.hidden = false;
+    result.textContent = "EduGenie is preparing your answer...";
+
+    try {
+        const response = await fetch("/api/learn", {
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                task: task.value,
+                text: text
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                data.detail || "Something went wrong."
+            );
+        }
+
+        displayResult(data.result);
+
+    } catch (error) {
+        result.textContent =
+            "Error: " + error.message;
+
+    } finally {
+        button.disabled = false;
+        button.textContent = "✨ Generate";
+    }
+});
+
+
+copyButton.addEventListener("click", async () => {
+    try {
+        await navigator.clipboard.writeText(
+            result.innerText
+        );
+
+        copyButton.textContent = "Copied!";
+
+    } catch {
+        copyButton.textContent =
+            "Select text to copy";
+    }
+
+    setTimeout(() => {
+        copyButton.textContent = "Copy";
+    }, 1500);
+});
+</script>
+
+</body>
+</html>
